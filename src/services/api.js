@@ -60,7 +60,7 @@ export async function queryFakeList(params) {
   return request(`/api/fake_list?${stringify(params)}`);
 }
 
-export async function fakeAccountLogin(params) {
+export async function doAccountLogin(params) {
   return request("http://localhost:3000/api/v1/login", {
     method: 'POST',
     body: params,
