@@ -61,9 +61,10 @@ export async function queryFakeList(params) {
 }
 
 export async function fakeAccountLogin(params) {
-  return request('/api/login/account', {
+  return request("http://localhost:3000/api/v1/login", {
     method: 'POST',
     body: params,
+    credentials: false,
   });
 }
 
