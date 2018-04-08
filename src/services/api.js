@@ -60,14 +60,6 @@ export async function queryFakeList(params) {
   return request(`/api/fake_list?${stringify(params)}`);
 }
 
-export async function doAccountLogin(params) {
-  return request("http://localhost:3000/api/v1/login", {
-    method: 'POST',
-    body: params,
-    credentials: false,
-  });
-}
-
 export async function fakeRegister(params) {
   return request('/api/register', {
     method: 'POST',
@@ -77,4 +69,56 @@ export async function fakeRegister(params) {
 
 export async function queryNotices() {
   return request('/api/notices');
+}
+
+// ============================================================
+
+const baseURL = "http://localhost:3000";
+
+export async function doAccountLogin(params) {
+  return request(`${baseURL}/api/v1/login`, { method: 'POST', body: params });
+}
+
+export async function doQueryCustomer(params) {
+  return request(`${baseURL}/api/v1/customers?${stringify(params)}`);
+}
+
+export async function doAddCustomer(params) {
+  return request(`${baseURL}/api/v1/customers`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'post',
+    },
+  });
+}
+
+export async function doRemoveCustomer(params) {
+  return request(`${baseURL}/api/v1/customers`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'remove',
+    },
+  });
+}
+
+export async function doActivateCustomer(params) {
+  return request(`${baseURL}/api/v1/customers`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'activate',
+    },
+  });
+}
+
+export async function doDeactivateCustomer(params) {
+  return request(`${baseURL}/api/v1/customers`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'deactivate',
+    },
+  });
 }

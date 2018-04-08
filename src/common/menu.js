@@ -154,6 +154,25 @@ const menuData = [
       },
     ],
   },
+  {
+    name: '基础信息',
+    icon: 'user',
+    path: 'basic',
+    children: [
+      {
+        name: '客户管理',
+        path: 'customer',
+      },
+      {
+        name: '产品类型',
+        path: 'product-type',
+      },
+      {
+        name: '零件类型',
+        path: 'component-type',
+      },
+    ],
+  },
 ];
 
 function formatter(data, parentPath = '/', parentAuthority) {
