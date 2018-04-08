@@ -42,7 +42,7 @@ const CreateForm = Form.create()(props => {
   };
   return (
     <Modal
-      title="新增客户"
+      title="创建客户"
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
@@ -56,6 +56,33 @@ const CreateForm = Form.create()(props => {
   );
 });
 
+const UpdateForm = Form.create()(props => {
+
+  const { modalVisible2, form, handleEdit, handleModalVisible2, id2, name2 } = props;
+
+  const okHandle = () => {
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      form.resetFields();
+      handleEdit(id2, fieldsValue);
+    });
+  };
+  return (
+    <Modal
+      title="编辑客户"
+      visible={modalVisible2}
+      onOk={okHandle}
+      onCancel={() => handleModalVisible2()}
+    >
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="客户名称">
+        {form.getFieldDecorator('name', {
+          initialValue: name2,
+          rules: [{ required: true, message: '请输入客户名称' }],
+        })(<Input placeholder="请输入" />)}
+      </FormItem>
+    </Modal>
+  );
+});
 
 @connect(({ customer, loading }) => ({
   customer,
@@ -67,6 +94,9 @@ const CreateForm = Form.create()(props => {
 export default class Customer extends PureComponent {
   state = {
     modalVisible: false,
+    modalVisible2: false,
+    id2: 0,
+    name2: '',
     selectedRows: [],
     formValues: {},
   };
@@ -188,17 +218,38 @@ export default class Customer extends PureComponent {
     this.setState({ modalVisible: !!flag });
   };
 
+  handleModalVisible2 = flag => {
+    this.setState({ modalVisible2: !!flag });
+  };
+
   handleAdd = fields => {
     this.props.dispatch({
       type: 'customer/add',
       payload: {
         name: fields.name,
       },
+      callback: () => { this.clickCallback(this.props.dispatch); },
     });
 
     message.success('添加成功');
     this.setState({
       modalVisible: false,
+    });
+  };
+
+  handleEdit = (_id, fields) => {
+    this.props.dispatch({
+      type: 'customer/update_name',
+      payload: {
+        id: _id,
+        name: fields.name,
+      },
+      callback: () => { this.clickCallback(this.props.dispatch); },
+    });
+
+    message.success('更新成功');
+    this.setState({
+      modalVisible2: false,
     });
   };
 
@@ -218,8 +269,7 @@ export default class Customer extends PureComponent {
   handleUpdateName = (record, e) => {
     e.preventDefault();
 
-    this.setState({ modalVisible: true });
-
+    this.setState({ modalVisible2: true, id2: record.id, name2: record.name });
   };
 
   handleDeleteCustomer = (record, e) => {
@@ -278,7 +328,7 @@ export default class Customer extends PureComponent {
 
   render() {
     const { customer: { data }, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const { selectedRows, modalVisible, modalVisible2, id2, name2 } = this.state;
 
     const columns = [
       {
@@ -330,6 +380,11 @@ export default class Customer extends PureComponent {
       handleModalVisible: this.handleModalVisible,
     };
 
+    const parentMethods2 = {
+      handleEdit: this.handleEdit,
+      handleModalVisible2: this.handleModalVisible2,
+    };
+
     return (
       <PageHeaderLayout title="客户列表">
         <Card bordered={false}>
@@ -360,6 +415,7 @@ export default class Customer extends PureComponent {
           </div>
         </Card>
         <CreateForm {...parentMethods} modalVisible={modalVisible} />
+        <UpdateForm {...parentMethods2} modalVisible2={modalVisible2} id2={id2} name2={name2} />
       </PageHeaderLayout>
     );
   }

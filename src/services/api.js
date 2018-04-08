@@ -123,9 +123,9 @@ export async function doDeactivateCustomer(params) {
   });
 }
 
-export async function doShowCustomer(params) {
-  return request(`${baseURL}/api/v1/customers/${params.id}`);
-}
+// export async function doShowCustomer(params) {
+//   return request(`${baseURL}/api/v1/customers/${params.id}`);
+// }
 
 export async function doUpdateCustomerStatus(params) {
   return request(`${baseURL}/api/v1/customers/${params.id}`, {

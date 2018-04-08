@@ -42,9 +42,9 @@ export default {
     *deactivate({ payload, callback }, { call, put }) {
       yield doEffects(payload, callback, call, put, doDeactivateCustomer, 'saveCustomer');
     },
-    *show({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doShowCustomer, 'saveCustomer');
-    },
+    // *show({ payload, callback }, { call, put }) {
+    //   yield doEffects(payload, callback, call, put, doShowCustomer, 'saveCustomer');
+    // },
     *update_name({ payload, callback }, { call, put }) {
       yield doEffects(payload, callback, call, put, doUpdateCustomerName, 'saveCustomer');
     },
