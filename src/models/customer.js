@@ -1,5 +1,14 @@
 import { doQueryCustomer, doAddCustomer, doRemoveCustomer, doActivateCustomer, doDeactivateCustomer } from '../services/api';
 
+function *doEffects(payload, callback, call, put, method, _type) {
+  const response = yield call(method, payload);
+  yield put({
+    type: _type,
+    payload: response,
+  });
+  if (callback) callback();
+}
+
 export default {
   namespace: 'customer',
 
@@ -12,43 +21,19 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(doQueryCustomer, payload);
-      yield put({
-        type: 'saveCustomer',
-        payload: response,
-      });
+      yield doEffects(payload, null, call, put, doQueryCustomer, 'saveCustomer');
     },
     *add({ payload, callback }, { call, put }) {
-      const response = yield call(doAddCustomer, payload);
-      yield put({
-        type: 'saveCustomer',
-        payload: response,
-      });
-      if (callback) callback();
+      yield doEffects(payload, callback, call, put, doAddCustomer, 'saveCustomer');
     },
     *remove({ payload, callback }, { call, put }) {
-      const response = yield call(doRemoveCustomer, payload);
-      yield put({
-        type: 'saveCustomer',
-        payload: response,
-      });
-      if (callback) callback();
+      yield doEffects(payload, callback, call, put, doRemoveCustomer, 'saveCustomer');
     },
     *activate({ payload, callback }, { call, put }) {
-      const response = yield call(doActivateCustomer, payload);
-      yield put({
-        type: 'saveCustomer',
-        payload: response,
-      });
-      if (callback) callback();
+      yield doEffects(payload, callback, call, put, doActivateCustomer, 'saveCustomer');
     },
     *deactivate({ payload, callback }, { call, put }) {
-      const response = yield call(doDeactivateCustomer, payload);
-      yield put({
-        type: 'saveCustomer',
-        payload: response,
-      });
-      if (callback) callback();
+      yield doEffects(payload, callback, call, put, doDeactivateCustomer, 'saveCustomer');
     },
   },
 
