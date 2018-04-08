@@ -122,3 +122,31 @@ export async function doDeactivateCustomer(params) {
     },
   });
 }
+
+export async function doShowCustomer(params) {
+  return request(`${baseURL}/api/v1/customers/${params.id}`);
+}
+
+export async function doUpdateCustomerStatus(params) {
+  return request(`${baseURL}/api/v1/customers/${params.id}`, {
+    method: 'PUT',
+    body: {
+      ...params,
+      method: 'update_status',
+    },
+  });
+}
+
+export async function doUpdateCustomerName(params) {
+  return request(`${baseURL}/api/v1/customers/${params.id}`, {
+    method: 'PUT',
+    body: {
+      ...params,
+      method: 'update_name',
+    },
+  });
+}
+
+export async function doDeleteCustomer(params) {
+  return request(`${baseURL}/api/v1/customers/${params.id}`, { method: 'DELETE' });
+}

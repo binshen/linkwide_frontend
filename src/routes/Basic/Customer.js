@@ -21,6 +21,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './Customer.less';
 
+const { confirm } = Modal;
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj =>
@@ -115,6 +116,11 @@ export default class Customer extends PureComponent {
     });
   };
 
+  clickCallback = (dispatch) => {
+    this.setState({ selectedRows: [] });
+    dispatch({ type: 'customer/fetch', payload: {} });
+  };
+
   handleMenuClick = e => {
     const { dispatch } = this.props;
     const { selectedRows } = this.state;
@@ -123,16 +129,13 @@ export default class Customer extends PureComponent {
 
     switch (e.key) {
       case 'remove':
-        dispatch({
-          type: 'customer/remove',
-          payload: {
-            id: selectedRows.map(row => row.id).join(','),
-          },
-          callback: () => {
-            this.setState({ selectedRows: [] });
+        confirm({
+          title: '您确定要删除所有选中的记录吗?',
+          onOk() {
             dispatch({
-              type: 'customer/fetch',
-              payload: {},
+              type: 'customer/remove',
+              payload: { id: selectedRows.map(row => row.id).join(',') },
+              callback: () => { this.clickCallback(dispatch); },
             });
           },
         });
@@ -140,31 +143,15 @@ export default class Customer extends PureComponent {
       case 'activate':
         dispatch({
           type: 'customer/activate',
-          payload: {
-            id: selectedRows.map(row => row.id).join(','),
-          },
-          callback: () => {
-            this.setState({ selectedRows: [] });
-            dispatch({
-              type: 'customer/fetch',
-              payload: {},
-            });
-          },
+          payload: { id: selectedRows.map(row => row.id).join(',') },
+          callback: () => { this.clickCallback(dispatch); },
         });
         break;
       case 'deactivate':
         dispatch({
           type: 'customer/deactivate',
-          payload: {
-            id: selectedRows.map(row => row.id).join(','),
-          },
-          callback: () => {
-            this.setState({ selectedRows: [] });
-            dispatch({
-              type: 'customer/fetch',
-              payload: {},
-            });
-          },
+          payload: { id: selectedRows.map(row => row.id).join(',') },
+          callback: () => { this.clickCallback(dispatch); },
         });
         break;
       default:
@@ -173,9 +160,7 @@ export default class Customer extends PureComponent {
   };
 
   handleSelectRows = rows => {
-    this.setState({
-      selectedRows: rows,
-    });
+    this.setState({ selectedRows: rows });
   };
 
   handleSearch = e => {
@@ -200,9 +185,7 @@ export default class Customer extends PureComponent {
   };
 
   handleModalVisible = flag => {
-    this.setState({
-      modalVisible: !!flag,
-    });
+    this.setState({ modalVisible: !!flag });
   };
 
   handleAdd = fields => {
@@ -216,6 +199,45 @@ export default class Customer extends PureComponent {
     message.success('添加成功');
     this.setState({
       modalVisible: false,
+    });
+  };
+
+  handleUpdateStatus = (record, e) => {
+    e.preventDefault();
+
+    this.props.dispatch({
+      type: 'customer/update_status',
+      payload: {
+        id: record.id,
+        activated: record.activated ? 0 : 1,
+      },
+      callback: () => { this.clickCallback(this.props.dispatch); },
+    });
+  };
+
+  handleUpdateName = (record, e) => {
+    e.preventDefault();
+
+    this.setState({ modalVisible: true });
+
+  };
+
+  handleDeleteCustomer = (record, e) => {
+    e.preventDefault();
+
+    const { dispatch } = this.props;
+
+    confirm({
+      title: '您确定要删除这条记录吗?',
+      onOk() {
+        dispatch({
+          type: 'customer/delete',
+          payload: {
+            id: record.id,
+          },
+          callback: () => { this.clickCallback(dispatch); },
+        });
+      },
     });
   };
 
@@ -283,13 +305,13 @@ export default class Customer extends PureComponent {
       },
       {
         title: '操作',
-        render: () => (
+        render: (text, record) => (
           <Fragment>
-            <a href="#">编辑</a>
+            <a href="#" onClick={e => this.handleUpdateName(record, e)}>编辑</a>
             <Divider type="vertical" />
-            <a href="#">删除</a>
+            <a href="#" onClick={e => this.handleDeleteCustomer(record, e)}>删除</a>
             <Divider type="vertical" />
-            <a href="#">停用</a>
+            <a href="#" onClick={e => this.handleUpdateStatus(record, e)}>{record.activated? "停用" : "启用"}</a>
           </Fragment>
         ),
       },

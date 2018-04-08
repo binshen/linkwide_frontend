@@ -1,4 +1,11 @@
-import { doQueryCustomer, doAddCustomer, doRemoveCustomer, doActivateCustomer, doDeactivateCustomer } from '../services/api';
+import {
+  doQueryCustomer,
+  doAddCustomer,
+  doRemoveCustomer,
+  doActivateCustomer,
+  doDeactivateCustomer,
+  doUpdateCustomerStatus, doDeleteCustomer, doUpdateCustomerName,
+} from '../services/api';
 
 function *doEffects(payload, callback, call, put, method, _type) {
   const response = yield call(method, payload);
@@ -34,6 +41,18 @@ export default {
     },
     *deactivate({ payload, callback }, { call, put }) {
       yield doEffects(payload, callback, call, put, doDeactivateCustomer, 'saveCustomer');
+    },
+    *show({ payload, callback }, { call, put }) {
+      yield doEffects(payload, callback, call, put, doShowCustomer, 'saveCustomer');
+    },
+    *update_name({ payload, callback }, { call, put }) {
+      yield doEffects(payload, callback, call, put, doUpdateCustomerName, 'saveCustomer');
+    },
+    *update_status({ payload, callback }, { call, put }) {
+      yield doEffects(payload, callback, call, put, doUpdateCustomerStatus, 'saveCustomer');
+    },
+    *delete({ payload, callback }, { call, put }) {
+      yield doEffects(payload, callback, call, put, doDeleteCustomer, 'saveCustomer');
     },
   },
 
