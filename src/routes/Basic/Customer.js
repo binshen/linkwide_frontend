@@ -28,55 +28,29 @@ const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
+
 const statusMap = ['default', 'success'];
 const status = ['停用', '启用'];
 
 const CreateForm = Form.create()(props => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+  const { modalVisible, form, handleEdit, handleModalVisible, id, name } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      handleAdd(fieldsValue);
+      handleEdit(id, fieldsValue);
     });
   };
   return (
     <Modal
-      title="创建客户"
+      title={id > 0 ? "编辑客户":"创建客户"}
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="客户名称">
         {form.getFieldDecorator('name', {
-          rules: [{ required: true, message: '请输入客户名称' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-    </Modal>
-  );
-});
-
-const UpdateForm = Form.create()(props => {
-
-  const { modalVisible2, form, handleEdit, handleModalVisible2, id2, name2 } = props;
-
-  const okHandle = () => {
-    form.validateFields((err, fieldsValue) => {
-      if (err) return;
-      form.resetFields();
-      handleEdit(id2, fieldsValue);
-    });
-  };
-  return (
-    <Modal
-      title="编辑客户"
-      visible={modalVisible2}
-      onOk={okHandle}
-      onCancel={() => handleModalVisible2()}
-    >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="客户名称">
-        {form.getFieldDecorator('name', {
-          initialValue: name2,
+          initialValue: name,
           rules: [{ required: true, message: '请输入客户名称' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
@@ -94,9 +68,8 @@ const UpdateForm = Form.create()(props => {
 export default class Customer extends PureComponent {
   state = {
     modalVisible: false,
-    modalVisible2: false,
-    id2: 0,
-    name2: '',
+    id: 0,
+    name: '',
     selectedRows: [],
     formValues: {},
   };
@@ -146,9 +119,10 @@ export default class Customer extends PureComponent {
     });
   };
 
-  clickCallback = (dispatch) => {
-    this.setState({ selectedRows: [] });
+  handleRefresh = () => {
+    const { dispatch } = this.props;
     dispatch({ type: 'customer/fetch', payload: {} });
+    this.setState({ selectedRows: [] });
   };
 
   handleMenuClick = e => {
@@ -165,7 +139,7 @@ export default class Customer extends PureComponent {
             dispatch({
               type: 'customer/remove',
               payload: { id: selectedRows.map(row => row.id).join(',') },
-              callback: () => { this.clickCallback(dispatch); },
+              callback: () => { this.handleRefresh(); },
             });
           },
         });
@@ -174,14 +148,14 @@ export default class Customer extends PureComponent {
         dispatch({
           type: 'customer/activate',
           payload: { id: selectedRows.map(row => row.id).join(',') },
-          callback: () => { this.clickCallback(dispatch); },
+          callback: () => { this.handleRefresh(); },
         });
         break;
       case 'deactivate':
         dispatch({
           type: 'customer/deactivate',
           payload: { id: selectedRows.map(row => row.id).join(',') },
-          callback: () => { this.clickCallback(dispatch); },
+          callback: () => { this.handleRefresh(); },
         });
         break;
       default:
@@ -218,39 +192,23 @@ export default class Customer extends PureComponent {
     this.setState({ modalVisible: !!flag });
   };
 
-  handleModalVisible2 = flag => {
-    this.setState({ modalVisible2: !!flag });
-  };
-
-  handleAdd = fields => {
-    this.props.dispatch({
-      type: 'customer/add',
-      payload: {
-        name: fields.name,
-      },
-      callback: () => { this.clickCallback(this.props.dispatch); },
-    });
-
-    message.success('添加成功');
-    this.setState({
-      modalVisible: false,
-    });
+  handleNew = () => {
+    this.setState({ modalVisible: true, id: 0, name: '' });
   };
 
   handleEdit = (_id, fields) => {
     this.props.dispatch({
-      type: 'customer/update_name',
+      type: _id > 0 ? 'customer/update_name' : 'customer/add',
       payload: {
         id: _id,
         name: fields.name,
       },
-      callback: () => { this.clickCallback(this.props.dispatch); },
+      callback: () => { this.handleRefresh(); },
     });
 
-    message.success('更新成功');
-    this.setState({
-      modalVisible2: false,
-    });
+    this.setState({ modalVisible: false });
+
+    message.success(_id > 0 ? '更新成功' : '添加成功');
   };
 
   handleUpdateStatus = (record, e) => {
@@ -262,21 +220,21 @@ export default class Customer extends PureComponent {
         id: record.id,
         activated: record.activated ? 0 : 1,
       },
-      callback: () => { this.clickCallback(this.props.dispatch); },
+      callback: () => { this.handleRefresh(); },
     });
   };
 
   handleUpdateName = (record, e) => {
     e.preventDefault();
 
-    this.setState({ modalVisible2: true, id2: record.id, name2: record.name });
+    this.setState({ modalVisible: true, id: record.id, name: record.name });
   };
 
   handleDeleteCustomer = (record, e) => {
     e.preventDefault();
 
     const { dispatch } = this.props;
-
+    const self = this;
     confirm({
       title: '您确定要删除这条记录吗?',
       onOk() {
@@ -285,8 +243,10 @@ export default class Customer extends PureComponent {
           payload: {
             id: record.id,
           },
-          callback: () => { this.clickCallback(dispatch); },
-        });
+          // callback: () => { self.handleRefresh(); },
+        }).then(() => {
+          self.handleRefresh()
+        })
       },
     });
   };
@@ -328,7 +288,7 @@ export default class Customer extends PureComponent {
 
   render() {
     const { customer: { data }, loading } = this.props;
-    const { selectedRows, modalVisible, modalVisible2, id2, name2 } = this.state;
+    const { selectedRows, modalVisible, id, name } = this.state;
 
     const columns = [
       {
@@ -376,13 +336,8 @@ export default class Customer extends PureComponent {
     );
 
     const parentMethods = {
-      handleAdd: this.handleAdd,
-      handleModalVisible: this.handleModalVisible,
-    };
-
-    const parentMethods2 = {
       handleEdit: this.handleEdit,
-      handleModalVisible2: this.handleModalVisible2,
+      handleModalVisible: this.handleModalVisible,
     };
 
     return (
@@ -391,7 +346,7 @@ export default class Customer extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
+              <Button icon="plus" type="primary" onClick={() => this.handleNew()}>
                 新建
               </Button>
               {selectedRows.length > 0 && (
@@ -414,8 +369,7 @@ export default class Customer extends PureComponent {
             />
           </div>
         </Card>
-        <CreateForm {...parentMethods} modalVisible={modalVisible} />
-        <UpdateForm {...parentMethods2} modalVisible2={modalVisible2} id2={id2} name2={name2} />
+        <CreateForm {...parentMethods} modalVisible={modalVisible} id={id} name={name} />
       </PageHeaderLayout>
     );
   }
