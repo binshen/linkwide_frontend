@@ -174,13 +174,13 @@ export const getRouterData = app => {
 
 
     '/basic/customer': {
-      component: dynamicWrapper(app, ['rule'], () => import('../routes/Basic/Customer')),
+      component: dynamicWrapper(app, ['customer'], () => import('../routes/Basic/Customer')),
     },
     '/basic/product-type': {
-      component: dynamicWrapper(app, ['rule'], () => import('../routes/Basic/ProductType')),
+      component: dynamicWrapper(app, ['productType'], () => import('../routes/Basic/ProductType')),
     },
     '/basic/component-type': {
-      component: dynamicWrapper(app, ['rule'], () => import('../routes/Basic/ComponentType')),
+      component: dynamicWrapper(app, ['componentType'], () => import('../routes/Basic/ComponentType')),
     },
 
   };

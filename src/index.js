@@ -20,9 +20,6 @@ app.use(createLoading());
 
 // 3. Register global model
 app.model(require('./models/global').default);
-app.model(require('./models/customer').default);
-app.model(require('./models/product-type').default);
-app.model(require('./models/component-type').default);
 
 // 4. Router
 app.router(require('./router').default);
