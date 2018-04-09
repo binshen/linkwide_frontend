@@ -1,9 +1,9 @@
 import {
-  doQueryComponentType,
-  doAddComponentType,
-  doRemoveComponentType,
-  doDeleteComponentType,
-  doUpdateComponentType,
+  doQueryProductType,
+  doAddProductType,
+  doRemoveProductType,
+  doDeleteProductType,
+  doUpdateProductType,
 } from '../services/api';
 
 function *doEffects(payload, callback, call, put, method, _type) {
@@ -16,7 +16,7 @@ function *doEffects(payload, callback, call, put, method, _type) {
 }
 
 export default {
-  namespace: 'componentType',
+  namespace: 'productType',
 
   state: {
     data: {
@@ -27,19 +27,19 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      yield doEffects(payload, null, call, put, doQueryComponentType, 'save');
+      yield doEffects(payload, null, call, put, doQueryProductType, 'save');
     },
     *add({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doAddComponentType, 'save');
+      yield doEffects(payload, callback, call, put, doAddProductType, 'save');
     },
     *remove({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doRemoveComponentType, 'save');
+      yield doEffects(payload, callback, call, put, doRemoveProductType, 'save');
     },
     *delete({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doDeleteComponentType, 'save');
+      yield doEffects(payload, callback, call, put, doDeleteProductType, 'save');
     },
     *update({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doUpdateComponentType, 'save');
+      yield doEffects(payload, callback, call, put, doUpdateProductType, 'save');
     },
   },
 

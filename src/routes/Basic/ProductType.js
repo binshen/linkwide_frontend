@@ -59,7 +59,7 @@ const CreateForm = Form.create()(props => {
 }))
 
 @Form.create()
-export default class Customer extends PureComponent {
+export default class ProductType extends PureComponent {
   state = {
     id: 0,
     name: '',
@@ -191,13 +191,13 @@ export default class Customer extends PureComponent {
     message.success(_id > 0 ? '更新成功' : '添加成功');
   };
 
-  handleUpdateName = (record, e) => {
+  handleUpdate = (record, e) => {
     e.preventDefault();
 
     this.setState({ modalVisible: true, id: record.id, name: record.name });
   };
 
-  handleDeleteCustomer = (record, e) => {
+  handleDeleteProductType = (record, e) => {
     e.preventDefault();
 
     const { dispatch } = this.props;
@@ -256,9 +256,9 @@ export default class Customer extends PureComponent {
         title: '操作',
         render: (text, record) => (
           <Fragment>
-            <a href="#" onClick={e => this.handleUpdateName(record, e)}>编辑</a>
+            <a href="#" onClick={e => this.handleUpdate(record, e)}>编辑</a>
             <Divider type="vertical" />
-            <a href="#" onClick={e => this.handleDeleteCustomer(record, e)}>删除</a>
+            <a href="#" onClick={e => this.handleDeleteProductType(record, e)}>删除</a>
           </Fragment>
         ),
       },
@@ -276,7 +276,7 @@ export default class Customer extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="客户列表">
+      <PageHeaderLayout title="产品类型列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
