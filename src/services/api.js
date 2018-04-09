@@ -123,10 +123,6 @@ export async function doDeactivateCustomer(params) {
   });
 }
 
-// export async function doShowCustomer(params) {
-//   return request(`${baseURL}/api/v1/customers/${params.id}`);
-// }
-
 export async function doUpdateCustomerStatus(params) {
   return request(`${baseURL}/api/v1/customers/${params.id}`, {
     method: 'PUT',
@@ -149,4 +145,44 @@ export async function doUpdateCustomerName(params) {
 
 export async function doDeleteCustomer(params) {
   return request(`${baseURL}/api/v1/customers/${params.id}`, { method: 'DELETE' });
+}
+
+
+
+export async function doQueryProductType(params) {
+  return request(`${baseURL}/api/v1/product_types?${stringify(params)}`);
+}
+
+export async function doAddProductType(params) {
+  return request(`${baseURL}/api/v1/product_types`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'post',
+    },
+  });
+}
+
+export async function doRemoveProductType(params) {
+  return request(`${baseURL}/api/v1/product_types`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'remove',
+    },
+  });
+}
+
+export async function doUpdateProductType(params) {
+  return request(`${baseURL}/api/v1/product_types/${params.id}`, {
+    method: 'PUT',
+    body: {
+      ...params,
+      method: 'update_name',
+    },
+  });
+}
+
+export async function doDeleteProductType(params) {
+  return request(`${baseURL}/api/v1/product_types/${params.id}`, { method: 'DELETE' });
 }

@@ -6,14 +6,12 @@ import {
   Card,
   Form,
   Input,
-  Select,
   Icon,
   Button,
   Dropdown,
   Menu,
   Modal,
   message,
-  Badge,
   Divider,
 } from 'antd';
 import StandardTable from 'components/StandardTable';
@@ -23,14 +21,10 @@ import styles from './TableList.less';
 
 const { confirm } = Modal;
 const FormItem = Form.Item;
-const { Option } = Select;
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-
-const statusMap = ['default', 'success'];
-const status = ['停用', '启用'];
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleEdit, handleModalVisible, id, name } = props;
@@ -43,25 +37,25 @@ const CreateForm = Form.create()(props => {
   };
   return (
     <Modal
-      title={id > 0 ? "编辑客户":"新建客户"}
+      title={id > 0 ? "编辑类型":"新建类型"}
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="客户名称">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="产品类型">
         {form.getFieldDecorator('name', {
           initialValue: name,
-          rules: [{ required: true, message: '请输入客户名称' }],
+          rules: [{ required: true, message: '请输入产品类型' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
     </Modal>
   );
 });
 
-@connect(({ customer, loading }) => ({
-  customer,
-  submitting: loading.effects['customer/fetch'],
-  loading: loading.models.customer,
+@connect(({ productType, loading }) => ({
+  productType,
+  submitting: loading.effects['productType/fetch'],
+  loading: loading.models.productType,
 }))
 
 @Form.create()
@@ -77,7 +71,7 @@ export default class Customer extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'customer/fetch',
+      type: 'productType/fetch',
     });
   }
 
@@ -102,7 +96,7 @@ export default class Customer extends PureComponent {
     }
 
     dispatch({
-      type: 'customer/fetch',
+      type: 'productType/fetch',
       payload: params,
     });
   };
@@ -114,14 +108,14 @@ export default class Customer extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'customer/fetch',
+      type: 'productType/fetch',
       payload: {},
     });
   };
 
   handleRefresh = () => {
     const { dispatch } = this.props;
-    dispatch({ type: 'customer/fetch', payload: {} });
+    dispatch({ type: 'productType/fetch', payload: {} });
     this.setState({ selectedRows: [] });
   };
 
@@ -137,25 +131,11 @@ export default class Customer extends PureComponent {
           title: '您确定要删除所有选中的记录吗?',
           onOk() {
             dispatch({
-              type: 'customer/remove',
+              type: 'productType/remove',
               payload: { id: selectedRows.map(row => row.id).join(',') },
               callback: () => { this.handleRefresh(); },
             });
           },
-        });
-        break;
-      case 'activate':
-        dispatch({
-          type: 'customer/activate',
-          payload: { id: selectedRows.map(row => row.id).join(',') },
-          callback: () => { this.handleRefresh(); },
-        });
-        break;
-      case 'deactivate':
-        dispatch({
-          type: 'customer/deactivate',
-          payload: { id: selectedRows.map(row => row.id).join(',') },
-          callback: () => { this.handleRefresh(); },
         });
         break;
       default:
@@ -182,7 +162,7 @@ export default class Customer extends PureComponent {
       });
 
       dispatch({
-        type: 'customer/fetch',
+        type: 'productType/fetch',
         payload: values,
       });
     });
@@ -198,7 +178,7 @@ export default class Customer extends PureComponent {
 
   handleEdit = (_id, fields) => {
     this.props.dispatch({
-      type: _id > 0 ? 'customer/update_name' : 'customer/add',
+      type: _id > 0 ? 'productType/update' : 'productType/add',
       payload: {
         id: _id,
         name: fields.name,
@@ -209,19 +189,6 @@ export default class Customer extends PureComponent {
     this.setState({ modalVisible: false });
 
     message.success(_id > 0 ? '更新成功' : '添加成功');
-  };
-
-  handleUpdateStatus = (record, e) => {
-    e.preventDefault();
-
-    this.props.dispatch({
-      type: 'customer/update_status',
-      payload: {
-        id: record.id,
-        activated: record.activated ? 0 : 1,
-      },
-      callback: () => { this.handleRefresh(); },
-    });
   };
 
   handleUpdateName = (record, e) => {
@@ -239,7 +206,7 @@ export default class Customer extends PureComponent {
       title: '您确定要删除这条记录吗?',
       onOk() {
         dispatch({
-          type: 'customer/delete',
+          type: 'productType/delete',
           payload: {
             id: record.id,
           },
@@ -257,18 +224,8 @@ export default class Customer extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="客户名称">
+            <FormItem label="产品类型">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="启用状态">
-              {getFieldDecorator('activated')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">停用</Option>
-                  <Option value="1">启用</Option>
-                </Select>
-              )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -287,31 +244,13 @@ export default class Customer extends PureComponent {
   }
 
   render() {
-    const { customer: { data }, loading } = this.props;
+    const { productType: { data }, loading } = this.props;
     const { selectedRows, modalVisible, id, name } = this.state;
 
     const columns = [
       {
-        title: '客户名称',
+        title: '产品类型',
         dataIndex: 'name',
-      },
-      {
-        title: '启用状态',
-        dataIndex: 'activated',
-        filters: [
-          {
-            text: status[0],
-            value: 0,
-          },
-          {
-            text: status[1],
-            value: 1,
-          },
-        ],
-        onFilter: (value, record) => record.activated.toString() === value,
-        render(val) {
-          return <Badge status={statusMap[val]} text={status[val]} />;
-        },
       },
       {
         title: '操作',
@@ -320,8 +259,6 @@ export default class Customer extends PureComponent {
             <a href="#" onClick={e => this.handleUpdateName(record, e)}>编辑</a>
             <Divider type="vertical" />
             <a href="#" onClick={e => this.handleDeleteCustomer(record, e)}>删除</a>
-            <Divider type="vertical" />
-            <a href="#" onClick={e => this.handleUpdateStatus(record, e)}>{record.activated? "停用" : "启用"}</a>
           </Fragment>
         ),
       },
@@ -330,8 +267,6 @@ export default class Customer extends PureComponent {
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
         <Menu.Item key="remove">批量删除</Menu.Item>
-        <Menu.Item key="activate">批量启用</Menu.Item>
-        <Menu.Item key="deactivate">批量停用</Menu.Item>
       </Menu>
     );
 

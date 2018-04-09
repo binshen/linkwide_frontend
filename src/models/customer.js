@@ -4,7 +4,9 @@ import {
   doRemoveCustomer,
   doActivateCustomer,
   doDeactivateCustomer,
-  doUpdateCustomerStatus, doDeleteCustomer, doUpdateCustomerName,
+  doDeleteCustomer,
+  doUpdateCustomerName,
+  doUpdateCustomerStatus,
 } from '../services/api';
 
 function *doEffects(payload, callback, call, put, method, _type) {
@@ -28,36 +30,33 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      yield doEffects(payload, null, call, put, doQueryCustomer, 'saveCustomer');
+      yield doEffects(payload, null, call, put, doQueryCustomer, 'save');
     },
     *add({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doAddCustomer, 'saveCustomer');
+      yield doEffects(payload, callback, call, put, doAddCustomer, 'save');
     },
     *remove({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doRemoveCustomer, 'saveCustomer');
+      yield doEffects(payload, callback, call, put, doRemoveCustomer, 'save');
     },
     *activate({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doActivateCustomer, 'saveCustomer');
+      yield doEffects(payload, callback, call, put, doActivateCustomer, 'save');
     },
     *deactivate({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doDeactivateCustomer, 'saveCustomer');
-    },
-    // *show({ payload, callback }, { call, put }) {
-    //   yield doEffects(payload, callback, call, put, doShowCustomer, 'saveCustomer');
-    // },
-    *update_name({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doUpdateCustomerName, 'saveCustomer');
-    },
-    *update_status({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doUpdateCustomerStatus, 'saveCustomer');
+      yield doEffects(payload, callback, call, put, doDeactivateCustomer, 'save');
     },
     *delete({ payload, callback }, { call, put }) {
-      yield doEffects(payload, callback, call, put, doDeleteCustomer, 'saveCustomer');
+      yield doEffects(payload, callback, call, put, doDeleteCustomer, 'save');
+    },
+    *update_name({ payload, callback }, { call, put }) {
+      yield doEffects(payload, callback, call, put, doUpdateCustomerName, 'save');
+    },
+    *update_status({ payload, callback }, { call, put }) {
+      yield doEffects(payload, callback, call, put, doUpdateCustomerStatus, 'save');
     },
   },
 
   reducers: {
-    saveCustomer(state, action) {
+    save(state, action) {
       return {
         ...state,
         data: action.payload,
