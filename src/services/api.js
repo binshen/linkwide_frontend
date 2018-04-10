@@ -187,7 +187,6 @@ export async function doDeleteProductType(params) {
 }
 
 
-
 export async function doQueryComponentType(params) {
   return request(`${baseURL}/api/v1/component_types?${stringify(params)}`);
 }
@@ -223,4 +222,42 @@ export async function doUpdateComponentType(params) {
 
 export async function doDeleteComponentType(params) {
   return request(`${baseURL}/api/v1/component_types/${params.id}`, { method: 'DELETE' });
+}
+
+
+export async function doQueryProduct(params) {
+  return request(`${baseURL}/api/v1/product?${stringify(params)}`);
+}
+
+export async function doAddProduct(params) {
+  return request(`${baseURL}/api/v1/product`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'post',
+    },
+  });
+}
+
+export async function doRemoveProduct(params) {
+  return request(`${baseURL}/api/v1/product`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'remove',
+    },
+  });
+}
+
+export async function doUpdateProduct(params) {
+  return request(`${baseURL}/api/v1/product/${params.id}`, {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function doDeleteProduct(params) {
+  return request(`${baseURL}/api/v1/product/${params.id}`, { method: 'DELETE' });
 }

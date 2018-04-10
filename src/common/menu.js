@@ -171,6 +171,14 @@ const menuData = [
         name: '零件类型',
         path: 'component-type',
       },
+      {
+        name: '产品管理',
+        path: 'product',
+      },
+      {
+        name: '零件管理',
+        path: 'component',
+      },
     ],
   },
 ];
