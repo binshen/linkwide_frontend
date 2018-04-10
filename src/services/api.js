@@ -226,11 +226,11 @@ export async function doDeleteComponentType(params) {
 
 
 export async function doQueryProduct(params) {
-  return request(`${baseURL}/api/v1/product?${stringify(params)}`);
+  return request(`${baseURL}/api/v1/products?${stringify(params)}`);
 }
 
 export async function doAddProduct(params) {
-  return request(`${baseURL}/api/v1/product`, {
+  return request(`${baseURL}/api/v1/products`, {
     method: 'POST',
     body: {
       ...params,
@@ -240,7 +240,7 @@ export async function doAddProduct(params) {
 }
 
 export async function doRemoveProduct(params) {
-  return request(`${baseURL}/api/v1/product`, {
+  return request(`${baseURL}/api/v1/products`, {
     method: 'POST',
     body: {
       ...params,
@@ -250,7 +250,7 @@ export async function doRemoveProduct(params) {
 }
 
 export async function doUpdateProduct(params) {
-  return request(`${baseURL}/api/v1/product/${params.id}`, {
+  return request(`${baseURL}/api/v1/products/${params.id}`, {
     method: 'PUT',
     body: {
       ...params,
@@ -260,4 +260,42 @@ export async function doUpdateProduct(params) {
 
 export async function doDeleteProduct(params) {
   return request(`${baseURL}/api/v1/product/${params.id}`, { method: 'DELETE' });
+}
+
+
+export async function doQueryComponent(params) {
+  return request(`${baseURL}/api/v1/components?${stringify(params)}`);
+}
+
+export async function doAddComponent(params) {
+  return request(`${baseURL}/api/v1/components`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'post',
+    },
+  });
+}
+
+export async function doRemoveComponent(params) {
+  return request(`${baseURL}/api/v1/components`, {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'remove',
+    },
+  });
+}
+
+export async function doUpdateComponent(params) {
+  return request(`${baseURL}/api/v1/components/${params.id}`, {
+    method: 'PUT',
+    body: {
+      ...params,
+    },
+  });
+}
+
+export async function doDeleteComponent(params) {
+  return request(`${baseURL}/api/v1/components/${params.id}`, { method: 'DELETE' });
 }
