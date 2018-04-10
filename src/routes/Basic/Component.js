@@ -37,15 +37,15 @@ const CreateForm = Form.create()(props => {
   };
   return (
     <Modal
-      title={id > 0 ? "编辑类型":"新建类型"}
+      title={id > 0 ? "编辑零件":"新建零件"}
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="零件类型">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="零件名称">
         {form.getFieldDecorator('name', {
           initialValue: name,
-          rules: [{ required: true, message: '请输入零件类型' }],
+          rules: [{ required: true, message: '请输入零件名称' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
     </Modal>
@@ -224,7 +224,7 @@ export default class Component extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="零件类型">
+            <FormItem label="零件名称">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
@@ -249,8 +249,16 @@ export default class Component extends PureComponent {
 
     const columns = [
       {
-        title: '零件类型',
+        title: '零件名称',
         dataIndex: 'name',
+      },
+      {
+        title: '零件类型',
+        dataIndex: 'type_id',
+      },
+      {
+        title: '单位',
+        dataIndex: 'unit',
       },
       {
         title: '操作',
@@ -276,7 +284,7 @@ export default class Component extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="零件类型列表">
+      <PageHeaderLayout title="零件列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>

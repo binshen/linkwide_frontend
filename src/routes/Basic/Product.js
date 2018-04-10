@@ -6,6 +6,7 @@ import {
   Card,
   Form,
   Input,
+  Select,
   Icon,
   Button,
   Dropdown,
@@ -21,6 +22,7 @@ import styles from './TableList.less';
 
 const { confirm } = Modal;
 const FormItem = Form.Item;
+const { Option } = Select;
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
@@ -37,15 +39,15 @@ const CreateForm = Form.create()(props => {
   };
   return (
     <Modal
-      title={id > 0 ? "编辑类型":"新建类型"}
+      title={id > 0 ? "编辑产品":"新建产品"}
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="产品类型">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="产品名称">
         {form.getFieldDecorator('name', {
           initialValue: name,
-          rules: [{ required: true, message: '请输入产品类型' }],
+          rules: [{ required: true, message: '请输入产品名称' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
     </Modal>
@@ -224,8 +226,18 @@ export default class Product extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="产品类型">
+            <FormItem label="产品名称">
               {getFieldDecorator('name')(<Input placeholder="请输入" />)}
+            </FormItem>
+          </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="启用状态">
+              {getFieldDecorator('activated')(
+                <Select placeholder="请选择" style={{ width: '100%' }}>
+                  <Option value="0">停用</Option>
+                  <Option value="1">启用</Option>
+                </Select>
+              )}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -249,8 +261,16 @@ export default class Product extends PureComponent {
 
     const columns = [
       {
-        title: '产品类型',
+        title: '产品名称',
         dataIndex: 'name',
+      },
+      {
+        title: '产品类型',
+        dataIndex: 'type_id',
+      },
+      {
+        title: '电压',
+        dataIndex: 'voltage',
       },
       {
         title: '操作',
@@ -276,7 +296,7 @@ export default class Product extends PureComponent {
     };
 
     return (
-      <PageHeaderLayout title="产品类型列表">
+      <PageHeaderLayout title="产品列表">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
